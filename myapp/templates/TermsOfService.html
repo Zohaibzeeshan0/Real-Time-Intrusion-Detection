@@ -1,0 +1,326 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DeepThreat - Terms of Service</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #000;
+            color: #00f7ff;
+            font-family: 'Courier New', monospace;
+            overflow-x: hidden;
+            overflow-y: auto;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #matrix {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            opacity: 0.3;
+        }
+
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+            background: rgba(0, 15, 30, 0.3);
+            border-bottom: 1px solid #00f7ff;
+            box-shadow: 0 0 15px rgba(0, 247, 255, 0.2);
+            z-index: 10;
+        }
+
+        .navbar-logo {
+            font-size: 1.5rem;
+            text-shadow: 0 0 10px #00f7ff;
+            color: #00f7ff;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .navbar-logo:hover {
+            color: #0f0;
+            text-shadow: 0 0 15px #0f0;
+            transform: scale(1.1);
+        }
+
+        .navbar-logo::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -5px;
+            left: 0;
+            background: #0f0;
+            transition: width 0.3s ease;
+        }
+
+        .navbar-logo:hover::after {
+            width: 100%;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: #00f7ff;
+            text-decoration: none;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-links a:hover {
+            color: #0f0;
+            text-shadow: 0 0 15px #0f0;
+            transform: scale(1.1);
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -5px;
+            left: 0;
+            background: #0f0;
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 80px 20px;
+        }
+
+        .terms-section {
+            background: rgba(0, 15, 30, 0.8);
+            border: 1px solid #00f7ff;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 247, 255, 0.5);
+            width: 100%;
+            max-width: 800px;
+            text-align: left;
+        }
+
+        .terms-section h2 {
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            color: #00f7ff;
+            text-shadow: 0 0 10px #00f7ff;
+            text-align: center;
+        }
+
+        .terms-section h3 {
+            font-size: 1.4rem;
+            margin: 1rem 0 0.5rem;
+            color: #00f7ff;
+            text-shadow: 0 0 5px #00f7ff;
+        }
+
+        .terms-section p {
+            font-size: 1rem;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+            color: #00f7ff;
+            }
+
+        .footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(0, 15, 30, 0.8);
+            color: #00f7ff;
+            text-align: center;
+            padding: 1rem;
+            border-top: 1px solid #00f7ff;
+            box-shadow: 0 -5px 15px rgba(0, 247, 255, 0.3);
+            z-index: 10;
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            margin: auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .footer-links {
+            margin-top: 0.5rem;
+            display: flex;
+            gap: 1rem;
+            }
+
+        .footer-links a {
+            color: #00f7ff;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: #0f0;
+            text-shadow: 0 0 10px #0f0;
+            }
+
+        
+    </style>
+</head>
+<body>
+    <canvas id="matrix"></canvas>
+
+    <!-- Navbar -->
+    <nav class="navbar">
+        <a href="{% url 'home' %}" class="navbar-logo">DeepThreat</a>
+        <div class="nav-links">
+            <a href="{% url 'login' %}">LOGIN</a>
+            <a href="{% url 'sign-up' %}">SIGN UP</a>
+            <a href="{% url 'about-us' %}">ABOUT US</a>
+            <a href="{% url 'contact-us' %}">CONTACT US</a>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container">
+        <div class="terms-section">
+            <h2>Terms of Service</h2>
+            <p>Welcome to DeepThreat, an intrusion detection system for smart home networks. By accessing or using our platform, you agree to be bound by these Terms of Service ("Terms"). If you do not agree, please do not use our services.</p>
+
+            <h3>1. Use of Terms</h3>
+            <p>By creating an account or using DeepThreat, you agree to comply with these Terms and our <a href="{% url 'privacy-policy' %}" style="color: #0f0;">Privacy Policy</a>. These Terms apply to all users of the platform.</p>
+
+            <h3>2. Account Responsibilities</h3>
+            <p>
+                - You must provide accurate information during signup and keep it updated.<br>
+                - You are responsible for maintaining the confidentiality of your account credentials.<br>
+                - You must notify us immediately of any unauthorized use of your account.<br>
+                - DeepThreat is not liable for losses due to unauthorized access caused by your failure to secure your account.
+            </p>
+
+            <h3>3. Acceptable Use</h3>
+            <p>You agree not to:</p>
+            <p>
+                - Use DeepThreat for illegal activities or to harm others.<br>
+                - Attempt to reverse-engineer, hack, or interfere with the platform’s functionality.<br>
+                - Overload the system with excessive or malicious activity.<br>
+                - Misrepresent your identity or intentions when using the platform.
+            </p>
+
+            <h3>4. Service Availability</h3>
+            <p>
+                - DeepThreat is provided on an “as-is” basis. We do not guarantee uninterrupted or error-free service.<br>
+                - We may perform maintenance or updates that temporarily affect access.<br>
+                - We reserve the right to modify or discontinue features at any time without notice.
+            </p>
+
+            <h3>5. Intellectual Property</h3>
+            <p>
+                - All content, design, and technology on DeepThreat are owned by DeepThreat or its licensors.<br>
+                - You may not copy, modify, or distribute any part of the platform without our permission.
+            </p>
+
+            <h3>6. Limitation of Liability</h3>
+            <p>
+                - DeepThreat is not liable for any damages resulting from your use of the platform, including data loss or security breaches.<br>
+                - Our liability is limited to the maximum extent permitted by law.
+            </p>
+
+            <h3>7. Termination</h3>
+            <p>
+                - We may suspend or terminate your account for violating these Terms.<br>
+                - You may delete your account at any time by contacting us.
+            </p>
+
+            <h3>8. Changes to Terms</h3>
+            <p>
+                - We may update these Terms periodically. Changes will be posted on this page with an updated effective date.<br>
+                - Your continued use of DeepThreat constitutes acceptance of the revised Terms.
+            </p>
+
+            <h3>9. Contact Us</h3>
+            <p>If you have questions about these Terms, please reach out via our <a href="{% url 'contact-us' %}" style="color: #0f0;">Contact Us</a> page.</p>
+
+            <p><em>Last Updated: June 25, 2025</em></p>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <p>© 2025 DeepThreat. All rights reserved.</p>
+            <div class="footer-links">
+                <a href="{% url 'privacy-policy' %}">Privacy Policy</a>
+                <a href="{% url 'terms-of-service' %}">Terms of Service</a>
+                <a href="{% url 'contact-us' %}">Contact Us</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Matrix Effect Script -->
+    <script>
+        const canvas = document.getElementById('matrix');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        
+        const chars = '01';
+        const fontSize = 14;
+        const columns = canvas.width / fontSize;
+        const drops = [];
+        
+        for (let x = 0; x < columns; x++) drops[x] = 1;
+        
+        function drawMatrix() {
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            ctx.fillStyle = '#00f7ff';
+            ctx.font = fontSize + 'px monospace';
+            
+            for (let i = 0; i < drops.length; i++) {
+                const text = chars[Math.floor(Math.random() * chars.length)];
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+                
+                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975)
+                    drops[i] = 0;
+                drops[i]++;
+            }
+        }
+
+        setInterval(drawMatrix, 50);
+    </script>
+</body>
+</html>

@@ -1,0 +1,306 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DeepThreat - Privacy Policy</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #000;
+            color: #00f7ff;
+            font-family: 'Courier New', monospace;
+            overflow-x: hidden;
+            overflow-y: auto;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #matrix {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            opacity: 0.3;
+        }
+
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+            background: rgba(0, 15, 30, 0.3);
+            border-bottom: 1px solid #00f7ff;
+            box-shadow: 0 0 15px rgba(0, 247, 255, 0.2);
+            z-index: 10;
+        }
+
+        .navbar-logo {
+            font-size: 1.5rem;
+            text-shadow: 0 0 10px #00f7ff;
+            color: #00f7ff;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .navbar-logo:hover {
+            color: #0f0;
+            text-shadow: 0 0 15px #0f0;
+            transform: scale(1.1);
+        }
+
+        .navbar-logo::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -5px;
+            left: 0;
+            background: #0f0;
+            transition: width 0.3s ease;
+        }
+
+        .navbar-logo:hover::after {
+            width: 100%;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: #00f7ff;
+            text-decoration: none;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-links a:hover {
+            color: #0f0;
+            text-shadow: 0 0 15px #0f0;
+            transform: scale(1.1);
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -5px;
+            left: 0;
+            background: #0f0;
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 80px 20px;
+        }
+
+        .policy-section {
+            background: rgba(0, 15, 30, 0.8);
+            border: 1px solid #00f7ff;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 247, 255, 0.5);
+            width: 100%;
+            max-width: 800px;
+            text-align: left;
+        }
+
+        .policy-section h2 {
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            color: #00f7ff;
+            text-shadow: 0 0 10px #00f7ff;
+            text-align: center;
+        }
+
+        .policy-section h3 {
+            font-size: 1.4rem;
+            margin: 1rem 0 0.5rem;
+            color: #00f7ff;
+            text-shadow: 0 0 5px #00f7ff;
+        }
+
+        .policy-section p {
+            font-size: 1rem;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+            color: #00f7ff;
+        }
+
+        .footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(0, 15, 30, 0.8);
+            color: #00f7ff;
+            text-align: center;
+            padding: 1rem;
+            border-top: 1px solid #00f7ff;
+            box-shadow: 0 -5px 15px rgba(0, 247, 255, 0.3);
+            z-index: 10;
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            margin: auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .footer-links {
+            margin-top: 0.5rem;
+            display: flex;
+            gap: 1rem;
+        }
+
+        .footer-links a {
+            color: #00f7ff;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: #0f0;
+            text-shadow: 0 0 10px #0f0;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="matrix"></canvas>
+
+    <!-- Navbar -->
+    <nav class="navbar">
+        <a href="{% url 'home' %}" class="navbar-logo">DeepThreat</a>
+        <div class="nav-links">
+            <a href="{% url 'login' %}">LOGIN</a>
+            <a href="{% url 'sign-up' %}">SIGN UP</a>
+            <a href="{% url 'about-us' %}">ABOUT US</a>
+            <a href="{% url 'contact-us' %}">CONTACT US</a>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container">
+        <div class="policy-section">
+            <h2>Privacy Policy</h2>
+            <p>At DeepThreat, we are committed to protecting your privacy. This Privacy Policy outlines how we collect, use, and safeguard your information when you use our intrusion detection system for smart home networks. By using DeepThreat, you agree to the terms described below.</p>
+
+            <h3>1. Information We Collect</h3>
+            <p>We collect the following types of information to provide and improve our services:</p>
+            <p>- <strong>Personal Information:</strong> When you sign up or log in, we collect your username, email address, first name, last name, and hashed password.</p>
+            <p>- <strong>Network Data:</strong> DeepThreat monitors network traffic on your smart home devices to detect potential threats. This includes packet metadata (e.g., IP addresses, ports, protocols) but does not include the content of your communications.</p>
+            <p>- <strong>Usage Data:</strong> We may collect information about how you interact with our platform, such as login times and feature usage, to enhance user experience.</p>
+
+            <h3>2. How We Use Your Information</h3>
+            <p>We use your information to:</p>
+            <p>- Authenticate users and provide access to DeepThreat’s features.</p>
+            <p>- Analyze network traffic to identify and alert you to security threats using machine learning models.</p>
+            <p>- Improve our services through usage analytics and system performance monitoring.</p>
+            <p>- Communicate with you regarding account updates or security alerts.</p>
+
+            <h3>3. Data Security</h3>
+            <p>We take reasonable measures to protect your data, including:</p>
+            <p>- Storing personal information securely with encrypted passwords.</p>
+            <p>- Anonymizing network data where possible to minimize privacy risks.</p>
+            <p>- Regularly updating our security protocols to address emerging threats.</p>
+            <p>However, no system is completely secure, and you use DeepThreat at your own risk.</p>
+
+            <h3>4. Data Sharing</h3>
+            <p>We do not sell or share your personal information with third parties, except:</p>
+            <p>- To comply with legal obligations or protect our rights.</p>
+            <p>- With your consent for specific purposes (e.g., sharing anonymized data for research).</p>
+
+            <h3>5. Your Rights</h3>
+            <p>You have the right to:</p>
+            <p>- Access, update, or delete your personal information by contacting us.</p>
+            <p>- Opt out of non-essential data collection (e.g., usage analytics) where applicable.</p>
+
+            <h3>6. Changes to This Policy</h3>
+            <p>We may update this Privacy Policy periodically. Changes will be posted on this page with an updated effective date. Your continued use of DeepThreat constitutes acceptance of the revised terms.</p>
+
+            <h3>7. Contact Us</h3>
+            <p>If you have questions about this Privacy Policy, please reach out via our <a href="{% url 'contact-us' %}" style="color: #0f0;">Contact Us</a>.</p>
+
+            <p><em>Last Updated: June 25, 2025</em></p>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <p>© 2025 DeepThreat.</p>
+            <div class="footer-links">
+                <a href="{% url 'privacy-policy' %}">Privacy Policy</a>
+                <a href="{% url 'terms-of-service' %}">Terms of Service</a>
+                <a href="{% url 'contact-us' %}">Contact Us</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Matrix Effect Script -->
+    <script>
+        const canvas = document.getElementById('matrix');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        
+        const chars = '01';
+        const fontSize = 14;
+        const columns = canvas.width / fontSize;
+        const drops = [];
+        
+        for (let x = 0; x <= columns; x++) drops[x] = 1;
+        
+        function drawMatrix() {
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            ctx.fillStyle = '#00f7ff';
+            ctx.font = fontSize + 'px monospace';
+            
+            for (let i = 0; i < drops.length; i++) {
+                const text = chars[Math.floor(Math.random() * chars.length)];
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+                
+                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975)
+                    drops[i] = 0;
+                drops[i]++;
+            }
+        }
+
+        setInterval(drawMatrix, 50);
+    </script>
+</body>
+</html>

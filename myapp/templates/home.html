@@ -1,0 +1,389 @@
+{% load static%}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DeepThreat - Security Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #000;
+            color: #00f7ff; /* Primary text color: Blue */
+            font-family: 'Courier New', monospace;
+            overflow-x: hidden;
+            overflow-y: auto;
+            min-height: 100vh;
+        }
+
+        /* Binary rain background */
+        #matrix {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 0;
+            opacity: 0.3;
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            padding: 2rem;
+        }
+
+        /* Navbar */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+            margin-bottom: 3rem;
+            background: rgba(0, 15, 30, 0.3);
+            border-bottom: 1px solid #00f7ff; /* Blue border */
+            box-shadow: 0 0 15px rgba(0, 247, 255, 0.2); /* Blue shadow */
+        }
+
+
+        .navbar-logo {
+            font-size: 1.5rem;
+            text-shadow: 0 0 10px #00f7ff;
+            color: #00f7ff;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .navbar-logo:hover {
+            color: #0f0; /* Green hover */
+            text-shadow: 0 0 15px #0f0; /* Green glow */
+            transform: scale(1.1);
+        }
+
+        .navbar-logo::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -5px;
+            left: 0;
+            background: #0f0; /* Green underline */
+            transition: width 0.3s ease;
+        }
+
+        .navbar-logo:hover::after {
+            width: 100%;
+        }
+
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: #00f7ff; /* Blue text */
+            text-decoration: none;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-links a:hover {
+            color: #0f0; /* Green hover */
+            text-shadow: 0 0 15px #0f0; /* Green glow */
+            transform: scale(1.1);
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -5px;
+            left: 0;
+            background: #0f0; /* Green underline */
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        @keyframes neonGlow {
+            from {
+                text-shadow: 0 0 10px #00f7ff, 0 0 20px #00f7ff, 0 0 30px #00f7ff; /* Blue glow */
+            }
+            to {
+                text-shadow: 0 0 20px #00f7ff, 0 0 30px #00f7ff, 0 0 40px #00f7ff; /* Blue glow */
+            }
+        }
+
+
+        .hero {
+    position: relative;
+    text-align: center;
+    margin-bottom: 3rem;
+    padding: 5rem 2rem;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 247, 255, 0.5); /* Blue shadow */
+    overflow: hidden; /* Prevents overflow */
+}
+
+.hero::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url("{% static 'images/CS3.jpeg' %}") no-repeat center center/cover;
+    opacity: 0.7; /* Adjust opacity here */
+    filter: blur(2px); /* Optional slight blur for depth */
+    z-index: -1;
+}
+
+.hero h1, 
+.hero p, 
+.hero .cta-button {
+    position: relative;
+    z-index: 1;
+}
+
+
+        .cta-button {
+            display: inline-block;
+            padding: 0.75rem 2rem;
+            font-size: 1.2rem;
+            color: #000;
+            background-color: #00f7ff; /* Blue background */
+            border: 2px solid #00f7ff; /* Blue border */
+            border-radius: 5px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 10px #00f7ff, 0 0 20px #00f7ff; /* Blue glow */
+        }
+
+        .cta-button:hover {
+            color: #0f0; /* Green text */
+            background-color: transparent;
+            border-color: #0f0; /* Green border */
+            text-shadow: 0 0 10px #0f0; /* Green glow */
+            box-shadow: 0 0 20px #0f0, 0 0 30px #0f0; /* Green glow */
+        }
+
+        /* Dashboard Panels */
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            padding: 1rem;
+        }
+
+        .panel {
+            background: rgba(0, 15, 30, 0.8); /* Blue background */
+            border: 1px solid #00f7ff; /* Blue border */
+            padding: 1.5rem;
+            border-radius: 5px;
+            box-shadow: 0 0 15px rgba(0, 247, 255, 0.3); /* Blue shadow */
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .panel:hover {
+            box-shadow: 0 0 25px rgba(0, 247, 255, 0.5); /* Blue shadow */
+            border-color: #0f0; /* Green border on hover */
+        }
+
+        .panel::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, #00f7ff, transparent); /* Blue gradient */
+            animation: animate 4s linear infinite;
+        }
+
+        @keyframes animate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .panel-content {
+            position: relative;
+            z-index: 1;
+            background: rgba(0, 10, 20, 0.9); /* Dark blue background */
+            padding: 1rem;
+            border-radius: 5px;
+        }
+
+        .status-bar {
+            height: 10px;
+            background: #001020; /* Dark blue */
+            margin: 1rem 0;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .status-fill {
+            height: 100%;
+            background: #0f0; /* Green fill */
+            width: 75%;
+            box-shadow: 0 0 10px #0f0; /* Green glow */
+        }
+
+
+    .footer {
+        background: rgba(0, 15, 30, 0.8);
+        color: #00f7ff;
+        text-align: center;
+        padding: 1rem;
+        margin-top: 3rem;
+        border-top: 1px solid #00f7ff;
+        box-shadow: 0 -5px 15px rgba(0, 247, 255, 0.3);
+    }
+
+    .footer-container {
+        max-width: 1200px;
+        margin: auto;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .footer-links {
+        margin-top: 0.5rem;
+        display: flex;
+        gap: 1rem;
+    }
+
+    .footer-links a {
+        color: #00f7ff;
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+
+    .footer-links a:hover {
+        color: #0f0;
+        text-shadow: 0 0 10px #0f0;
+    }
+    </style>
+</head>
+<body>
+    <canvas id="matrix"></canvas>
+    
+    <div class="container">
+        <nav class="navbar">
+            <a href="{% url 'home' %}" class="navbar-logo">DeepThreat</a>
+            <div class="nav-links">
+                <a href="{% url 'login' %}">LOGIN</a>
+                <a href="{% url 'about-us' %}">ABOUT US</a>
+                <a href="{% url 'contact-us' %}">CONTACT US</a>
+            </div>
+        </nav>
+
+        <section class="hero">
+            <h1>Cybersecurity Reinvented</h1>
+            <p>Real-time threat detection and network monitoring at your fingertips.</p>
+            <a href="{% url 'dashboard' %}" class="cta-button">Explore Dashboard</a>
+        </section>
+
+        <div class="dashboard">
+            <div class="panel">
+                <div class="panel-content">
+                    <h3>REAL-TIME MONITORING</h3>
+                    <div class="status-bar">
+                        <div class="status-fill"></div>
+                    </div>
+                    <p>Continuous surveillance for instant threat detection.</p>
+                </div>
+            </div>
+
+            <div class="panel">
+                <div class="panel-content">
+                    <h3>ADVANCED THREAT DETECTION</h3>
+                    <div class="status-bar">
+                        <div class="status-fill" style="width: 90%"></div>
+                    </div>
+                    <p>Utilizing AI for proactive threat detection.</p>
+                </div>
+            </div>
+
+            <div class="panel">
+                <div class="panel-content">
+                    <h3>SEAMLESS INTEGRATION</h3>
+                    <div class="status-bar">
+                        <div class="status-fill" style="width: 90%"></div>
+                    </div>
+                    <p>Effortlessly integrates with our IDS to enhance threat detection.</p>
+                </div>
+            </div>
+        </div>
+        <footer class="footer">
+            <div class="footer-container">
+                <p>&copy; 2025 DeepThreat. All rights reserved.</p>
+                <div class="footer-links">
+                    <a href="{% url 'privacy-policy' %}">Privacy Policy</a>
+                    <a href="{% url 'terms-of-service' %}">Terms of Service</a>
+                    <a href="{% url 'contact-us' %}">Contact Us</a>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // Binary rain effect
+        const canvas = document.getElementById('matrix');
+        const ctx = canvas.getContext('2d');
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const chars = '01';
+        const fontSize = 14;
+        const columns = canvas.width / fontSize;
+        const drops = [];
+
+        for (let x = 0; x < columns; x++) drops[x] = 1;
+
+        function drawMatrix() {
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            ctx.fillStyle = '#00f7ff'; /* Blue matrix */
+            ctx.font = fontSize + 'px monospace';
+
+            for (let i = 0; i < drops.length; i++) {
+                const text = chars[Math.floor(Math.random() * chars.length)];
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+                
+                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975)
+                    drops[i] = 0;
+                drops[i]++;
+            }
+        }
+
+        setInterval(drawMatrix, 50);
+
+        // Random glitch effect
+        setInterval(() => {
+            document.querySelectorAll('.panel').forEach(panel => {
+                if (Math.random() > 0.9) {
+                    panel.style.transform = `translateX(${Math.random() * 4 - 2}px)`;
+                    setTimeout(() => {
+                        panel.style.transform = 'translateX(0)';
+                    }, 50);
+                }
+            });
+        }, 1000);
+    </script>
+</body>
+</html>
