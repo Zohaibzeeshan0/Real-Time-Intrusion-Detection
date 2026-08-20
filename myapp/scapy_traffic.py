@@ -1,3 +1,13 @@
+import warnings
+import os
+
+# Suppress warnings
+warnings.filterwarnings('ignore', category=UserWarning)
+warnings.filterwarnings('ignore', category=DeprecationWarning)
+
+# Suppress scapy libpcap warning
+os.environ['SCAPY_USE_PCAP'] = '0'
+
 from scapy.all import IP, TCP, UDP, sniff, get_if_list
 import numpy as np
 import joblib
@@ -87,12 +97,12 @@ def classify_packet(packet):
 # Process and classify packets in real-time
 def process_packet(packet):
     classification = classify_packet(packet)
-    print(f"📡 Captured Packet: {packet.summary()}")
-    print(f"🔍 Model Prediction: {classification}\n")
+    print(f"[PACKET] Captured Packet: {packet.summary()}")
+    print(f"[PREDICTION] Model Prediction: {classification}\n")
 
 # Sniff live packets and classify them
 def capture_live_traffic(packet_count=10):
-    print(f"🔍 Capturing {packet_count} packets from {WIFI_INTERFACE}...")
+    print(f"[CAPTURE] Capturing {packet_count} packets from {WIFI_INTERFACE}...")
 
     # Capture packets
     packets = sniff(iface=WIFI_INTERFACE, count=packet_count)
@@ -100,9 +110,9 @@ def capture_live_traffic(packet_count=10):
     # Extract features, classify and print results
     for pkt in packets:
         classification = classify_packet(pkt)
-        print(f"📡 Captured Packet: {pkt.summary()}")
-        print(f"🔍 Model Prediction: {classification}\n")
+        print(f"[PACKET] Captured Packet: {pkt.summary()}")
+        print(f"[PREDICTION] Model Prediction: {classification}\n")
 
 # Start sniffing packets (Fixed: Only capture 10 packets at a time)
-print(f"🔍 Listening on {WIFI_INTERFACE}...")
+print(f"[LISTENING] Listening on {WIFI_INTERFACE}...")
 sniff(iface=WIFI_INTERFACE, count=10, filter="ip", prn=process_packet, store=False)
