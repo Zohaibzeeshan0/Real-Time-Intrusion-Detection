@@ -1,12 +1,482 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>DeepThreat - User Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #000;
+            color: #00f7ff;
+            font-family: 'Courier New', monospace;
+            overflow-x: hidden;
+            overflow-y: auto;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #matrix {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            opacity: 0.3;
+        }
+
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+            background: rgba(0, 15, 30, 0.9);
+            border-bottom: 2px solid #00f7ff;
+            box-shadow: 0 0 20px rgba(0, 247, 255, 0.3);
+            z-index: 100;
+        }
+
+        .navbar-logo {
+            font-size: 1.5rem;
+            text-shadow: 0 0 10px #00f7ff;
+            color: #00f7ff;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+
+        .navbar-logo:hover {
+            color: #0f0;
+            text-shadow: 0 0 20px #0f0;
+            transform: scale(1.05);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: #00f7ff;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+        }
+
+        .nav-links a:hover {
+            color: #0f0;
+            background: rgba(0, 255, 0, 0.1);
+            box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
+        }
+
+        .logout-btn {
+            background: rgba(255, 0, 0, 0.2) !important;
+            border: 1px solid #ff0000 !important;
+            color: #ff0000 !important;
+        }
+
+        .logout-btn:hover {
+            background: rgba(255, 0, 0, 0.4) !important;
+            box-shadow: 0 0 10px rgba(255, 0, 0, 0.5) !important;
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            margin-top: 100px;
+            padding: 2rem;
+            flex: 1;
+        }
+
+        .dashboard-header {
+            margin-bottom: 3rem;
+            padding: 2rem;
+            background: rgba(0, 15, 30, 0.8);
+            border: 1px solid #00f7ff;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 247, 255, 0.2);
+        }
+
+        .header-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 0 10px #00f7ff;
+        }
+
+        .user-info {
+            font-size: 1.1rem;
+            color: #00ff00;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .stat-card {
+            background: rgba(0, 15, 30, 0.8);
+            border: 2px solid #00f7ff;
+            padding: 2rem;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 0 15px rgba(0, 247, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            box-shadow: 0 0 30px rgba(0, 247, 255, 0.5);
+            border-color: #0f0;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #00ff00;
+            margin: 1rem 0;
+            text-shadow: 0 0 10px #00ff00;
+        }
+
+        .stat-label {
+            font-size: 1rem;
+            color: #00f7ff;
+            text-transform: uppercase;
+        }
+
+        .data-section {
+            margin-bottom: 3rem;
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #00f7ff;
+            text-shadow: 0 0 10px #00f7ff;
+        }
+
+        .table-container {
+            background: rgba(0, 15, 30, 0.8);
+            border: 1px solid #00f7ff;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 0 15px rgba(0, 247, 255, 0.2);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: rgba(0, 247, 255, 0.1);
+            border-bottom: 2px solid #00f7ff;
+        }
+
+        th {
+            padding: 1rem;
+            text-align: left;
+            color: #00f7ff;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid rgba(0, 247, 255, 0.2);
+        }
+
+        tbody tr:hover {
+            background: rgba(0, 247, 255, 0.05);
+            box-shadow: inset 0 0 10px rgba(0, 247, 255, 0.1);
+        }
+
+        .anomaly-row {
+            background: rgba(255, 0, 0, 0.05);
+        }
+
+        .anomaly-row:hover {
+            background: rgba(255, 0, 0, 0.15);
+        }
+
+        .empty-message {
+            text-align: center;
+            padding: 2rem;
+            color: #999;
+            font-style: italic;
+        }
+
+        .action-btn {
+            background: rgba(0, 247, 255, 0.2);
+            border: 1px solid #00f7ff;
+            color: #00f7ff;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .action-btn:hover {
+            background: rgba(0, 247, 255, 0.4);
+            box-shadow: 0 0 10px rgba(0, 247, 255, 0.5);
+        }
+
+        .messages {
+            margin-bottom: 2rem;
+        }
+
+        .message {
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 5px;
+            border-left: 4px solid;
+        }
+
+        .message.success {
+            background: rgba(0, 255, 0, 0.1);
+            border-left-color: #00ff00;
+            color: #00ff00;
+        }
+
+        .message.error {
+            background: rgba(255, 0, 0, 0.1);
+            border-left-color: #ff0000;
+            color: #ff0000;
+        }
+
+        .message.info {
+            background: rgba(0, 247, 255, 0.1);
+            border-left-color: #00f7ff;
+            color: #00f7ff;
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                flex-wrap: wrap;
+                gap: 1rem;
+            }
+
+            .container {
+                margin-top: 120px;
+                padding: 1rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            table {
+                font-size: 0.9rem;
+            }
+
+            th, td {
+                padding: 0.5rem;
+            }
+        }
+    </style>
 </head>
 <body>
-    <h3> Welcome to home page</h3>
+    <canvas id="matrix"></canvas>
+
+    <nav class="navbar">
+        <a href="/" class="navbar-logo">🛡️ DeepThreat IDS</a>
+        <div class="nav-links">
+            <a href="/dashboard/">Dashboard</a>
+            <a href="/about-us/">About</a>
+            <a href="/contact-us/">Contact</a>
+            <a href="/logout/" class="logout-btn">Logout</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- Messages -->
+        {% if messages %}
+            <div class="messages">
+                {% for message in messages %}
+                    <div class="message {% if message.tags %}{{ message.tags }}{% endif %}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <!-- Dashboard Header -->
+        <div class="dashboard-header">
+            <h1 class="header-title">Welcome to Your Security Dashboard</h1>
+            <div class="user-info">
+                {% if user.is_authenticated %}
+                    <p>Logged in as: <strong>{{ user.username }}</strong> ({{ user_email }})</p>
+                {% else %}
+                    <p>Not logged in</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Statistics Cards -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-label">Total Traffic Packets</div>
+                <div class="stat-number">{{ total_traffic }}</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Anomalies Detected</div>
+                <div class="stat-number">{{ anomaly_count }}</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Active Users</div>
+                <div class="stat-number">{{ active_users_count }}</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Security Status</div>
+                <div class="stat-number" style="color: {% if anomaly_count > 10 %}#ff0000{% else %}#00ff00{% endif %}">
+                    {% if anomaly_count > 10 %}ALERT{% else %}SAFE{% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Traffic -->
+        <div class="data-section">
+            <h2 class="section-title">📊 Recent Network Traffic</h2>
+            {% if recent_traffic %}
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Timestamp</th>
+                                <th>Source IP</th>
+                                <th>Destination IP</th>
+                                <th>Protocol</th>
+                                <th>Classification</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for traffic in recent_traffic %}
+                                <tr {% if 'anomaly' in traffic.prediction|lower or 'attack' in traffic.prediction|lower %}class="anomaly-row"{% endif %}>
+                                    <td>{{ traffic.timestamp|date:"Y-m-d H:i:s" }}</td>
+                                    <td>{{ traffic.src_ip }}</td>
+                                    <td>{{ traffic.dest_ip }}</td>
+                                    <td>{{ traffic.protocol }}</td>
+                                    <td><strong>{{ traffic.prediction }}</strong></td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="empty-message">No traffic data available yet. Start monitoring to see activity.</div>
+            {% endif %}
+        </div>
+
+        <!-- Recent Anomalies -->
+        <div class="data-section">
+            <h2 class="section-title">🚨 Recent Anomalies & Threats</h2>
+            {% if recent_anomalies %}
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Timestamp</th>
+                                <th>Source IP</th>
+                                <th>Destination IP</th>
+                                <th>Protocol</th>
+                                <th>Threat Type</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for anomaly in recent_anomalies %}
+                                <tr class="anomaly-row">
+                                    <td>{{ anomaly.timestamp|date:"Y-m-d H:i:s" }}</td>
+                                    <td>{{ anomaly.src_ip }}</td>
+                                    <td>{{ anomaly.dest_ip }}</td>
+                                    <td>{{ anomaly.protocol }}</td>
+                                    <td><strong style="color: #ff0000;">{{ anomaly.prediction }}</strong></td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="empty-message">✅ No anomalies detected. Your network is secure!</div>
+            {% endif %}
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="data-section" style="margin-top: 3rem;">
+            <h2 class="section-title">⚙️ Actions</h2>
+            <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                <button class="action-btn" onclick="startMonitoring()">Start Monitoring</button>
+                <button class="action-btn" onclick="refreshData()">Refresh Data</button>
+                <button class="action-btn" onclick="testAlert()">Test Alert</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Matrix Rain Background
+        const canvas = document.getElementById('matrix');
+        const ctx = canvas.getContext('2d');
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const chars = '01アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン';
+        const size = 20;
+        const columns = canvas.width / size;
+        const drops = Array(Math.floor(columns)).fill(0);
+
+        function drawMatrix() {
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#00f7ff';
+            ctx.font = size + 'px monospace';
+
+            for (let i = 0; i < drops.length; i++) {
+                const char = chars[Math.floor(Math.random() * chars.length)];
+                ctx.fillText(char, i * size, drops[i] * size);
+
+                if (drops[i] * size > canvas.height || Math.random() > 0.95) {
+                    drops[i] = 0;
+                }
+                drops[i]++;
+            }
+        }
+
+        setInterval(drawMatrix, 50);
+
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+
+        // Functions for action buttons
+        function startMonitoring() {
+            alert('Starting network monitoring...\nThis will capture live traffic from your network interface.');
+        }
+
+        function refreshData() {
+            location.reload();
+        }
+
+        function testAlert() {
+            alert('Test alert sent! Check your email for notification.');
+        }
+    </script>
 </body>
 </html>
